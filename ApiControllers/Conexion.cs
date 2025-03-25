@@ -1,39 +1,21 @@
-public class Motos : ControllerMotos {
-    [HttpGet("sql")]
-    public IActionResult ListarMotosSql(){
-        List<MotosSQL> lista = new List<MotosSQL>()
-       
-     sqlMotos conn = new sqlMotos (Motos.SQL_SERVER);
-     sqlcommand cmd = new sqlcommand ("select IdMotos,Motos from Motos");
-     cmd.Connection = conn;
-     cmd.CommandType = System.Data.CommandType.Text;
-     cmd.Connection.Open();
-       
-     sqlDataReader reader = cmd.Executereader();
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using System.Data;
+using MongoDB.Driver;
 
-     while (reader.Read()){
-        MotosSQL Motos = new Carrera();
-        Motos.IdMotos = reader.GetInt16("IdMotos");
-        Motos.Motos = reader.GetString("Motos");
-
-        lista.Add(carrera);
-
-    }
-
-    reader.Close();
-    conn.Close();
-
-    return Ok(lista);
- }
+[ApiController]
+[Route("Conexion")]
+public class Motos : Controller {
+   
 
     [HttpGet("mongo")]
 
-    public IActionResult ListarMotosMongoDb(){
-        MongoClient client = new MongoClient(MotosConexion.MONGO_DB);
-        var db = client.GetDatabase("Practica2_Motos");
-        var collection = db.GetCollection<MotosMongo>("Motos");
+    public IActionResult ListaDeMotosMongoDb(){
+        MongoClient client = new MongoClient(CadenasConexion.MONGO_DB);
+        var db = client.GetDatabase("Practica2_Angel_Jorge");
+        var collection = db.GetCollection<MotosMongo>("ListaDeMotos");
 
-        var lista = collection.Find(FilterDefinition<MotosMongo>.empty).ToList();
+        var lista = collection.Find(FilterDefinition<MotosMongo>.Empty).ToList();
         
         return Ok(lista);
     }
